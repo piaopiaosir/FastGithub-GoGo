@@ -1,6 +1,6 @@
 # FastGithub-GoGo
 
-<p align="center"><img src="newicon.png" width="120" height="120" alt="FastGithub-GoGo"></p>
+<p align="center"><img src="https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/newicon.png" width="120" height="120" alt="FastGithub-GoGo"></p>
 
 GitHub 镜像加速用户脚本。探测 GitHub 连通性，不可达时自动切换镜像站；Release / raw / 归档下载链接走代理加速；提供可拖拽、可最小化为悬浮球的设置面板。
 
