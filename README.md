@@ -1,6 +1,6 @@
 # FastGithub-GoGo
 
-<p align="center"><img src="icon.png" width="120" height="120" alt="FastGithub-GoGo"></p>
+<p align="center"><img src="newicon.png" width="120" height="120" alt="FastGithub-GoGo"></p>
 
 GitHub 镜像加速用户脚本。探测 GitHub 连通性，不可达时自动切换镜像站；Release / raw / 归档下载链接走代理加速；提供可拖拽、可最小化为悬浮球的设置面板。
 
@@ -32,10 +32,10 @@ GitHub 镜像加速用户脚本。探测 GitHub 连通性，不可达时自动�
 
 ## 图标
 
-- `icon.png`：256×256，用于脚本元数据 `@icon`
-- `icon.ico`：多尺寸（256 / 128 / 64 / 48 / 32 / 16）
+- `newicon.png`：256×256，用于脚本元数据 `@icon`
+- `newicon.ico`：多尺寸（256 / 128 / 64 / 48 / 32 / 16）
 
-CDN 地址（jsdmirror 加速）：`https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/icon.png`
+CDN 地址（jsdmirror 加速）：`https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/newicon.png`
 
 ## 版本
 
