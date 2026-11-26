@@ -50,9 +50,6 @@
     { host: "https://6github.com", rawHost: "raw.6githubusercontent.com" }
   ];
 
-  const FALLBACK_NODE_BASES = [
-    "https://git.tangbai.cc", "https://gh.927223.xyz", "https://gh-proxy.com", "https://ghfile.geekertao.top", "https://github.chenc.dev", "https://gh.dpik.top", "https://ghm.078465.xyz", "https://ghproxy.imciel.com", "https://gitproxy.mrhjx.cn", "https://gh.monlor.com", "https://ghp.keleyaa.com", "https://gh.nxnow.top", "https://gh.chjina.com", "https://jiashu.1win.eu.org", "https://fastgit.cc", "https://gh.noki.icu", "https://github.ednovas.xyz", "https://tvv.tw", "https://ghpxy.hwinzniej.top", "https://gh.catmak.name", "https://g.blfrp.cn", "https://github.geekery.cn", "https://gh.b52m.cn", "https://ghproxy.net", "https://git.yylx.win", "https://ghfast.top", "https://github.xxlab.tech", "https://ghproxy.cxkpro.top", "https://ghproxy.monkeyray.net", "https://git.669966.xyz", "https://github.dpik.top", "https://gh.ddlc.top"
-  ];
 
   const DEFAULT_SETTINGS = {
     enabled: true,
@@ -792,7 +789,7 @@
     function fetchPool() {
       return new Promise(function (resolve) {
         let settled = false;
-        const timer = window.setTimeout(function () { finish(FALLBACK_NODE_BASES.slice(), "timeout"); }, FETCH_TIMEOUT_MS);
+        const timer = window.setTimeout(function () { finish([], "timeout"); }, FETCH_TIMEOUT_MS);
 
         function finish(nodes, reason) {
           if (settled) return;
@@ -803,7 +800,7 @@
         }
 
         if (typeof GM_xmlhttpRequest !== "function") {
-          finish(FALLBACK_NODE_BASES.slice(), "no-gm");
+          finish([], "no-gm");
           return;
         }
         try {
@@ -813,13 +810,13 @@
             timeout: FETCH_TIMEOUT_MS,
             onload: function (response) {
               const found = extractNodes(response.responseText || "");
-              finish(found.length ? found : FALLBACK_NODE_BASES.slice(), found.length ? "remote" : "fallback");
+              finish(found, found.length ? "remote" : "empty");
             },
-            onerror: function () { finish(FALLBACK_NODE_BASES.slice(), "error"); },
-            ontimeout: function () { finish(FALLBACK_NODE_BASES.slice(), "timeout"); }
+            onerror: function () { finish([], "error"); },
+            ontimeout: function () { finish([], "timeout"); }
           });
         } catch (error) {
-          finish(FALLBACK_NODE_BASES.slice(), "exception");
+          finish([], "exception");
         }
       });
     }
@@ -2507,10 +2504,10 @@
         Dom.create("span", { class: "ghm-foot-side", text: "v" + SCRIPT_VERSION }),
         Dom.create("a", {
           class: "ghm-foot-by",
-          href: "https://github.com/piaopiaosir/FastGithub-GoGo",
+          href: "https://github.com/piaopiaosir",
           target: "_blank",
           rel: "noopener noreferrer",
-          title: "访问 FastGithub-GoGo 项目主页",
+          title: "访问 PIAOPIAO 的 GitHub 主页",
           text: "by PIAOPIAO"
         }),
         Dom.create("button", {
