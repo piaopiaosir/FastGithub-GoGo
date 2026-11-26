@@ -39,7 +39,7 @@ CDN 地址（jsdmirror 加速）：`https://cdn.jsdmirror.com/gh/piaopiaosir/Fas
 
 ## 版本
 
-当前版本：0.0.0
+当前版本：1.0.0
 
 ## 许可
 
