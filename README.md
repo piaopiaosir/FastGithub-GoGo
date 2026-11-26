@@ -1,5 +1,7 @@
 # FastGithub-GoGo
 
+<p align="center"><img src="icon.png" width="120" height="120" alt="FastGithub-GoGo"></p>
+
 GitHub 镜像加速用户脚本。探测 GitHub 连通性，不可达时自动切换镜像站；Release / raw / 归档下载链接走代理加速；提供可拖拽、可最小化为悬浮球的设置面板。
 
 ## 功能特性
@@ -35,6 +37,13 @@ node ghm-smoke.test.cjs
 ```
 
 测试使用极简 DOM 模拟环境，覆盖容器挂载、探测、跳转、下载链接改写、面板交互、设置写回等断言。设置 `GHM_DUMP=1` 可额外导出面板预览 HTML。
+
+## 图标
+
+- `icon.png`：256×256，用于脚本元数据 `@icon`
+- `icon.ico`：多尺寸（256 / 128 / 64 / 48 / 32 / 16）
+
+CDN 地址（jsdmirror 加速）：`https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/icon.png`
 
 ## 版本
 

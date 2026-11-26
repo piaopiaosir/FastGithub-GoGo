@@ -3,8 +3,10 @@
 // @namespace    飘飘
 // @author       PIAOPIAO
 // @version      0.0.0
-// @description  探测 GitHub 连通性，不可达时自动切换镜像站；Release / raw / 归档下载链接走代理加速；可拖拽、可最小化为悬浮球的设置面板
+// @description  🚀 GitHub 转圈圈？自动探路，不通就秒切镜像站｜Release / raw / 归档下载全走代理加速，快到飞起｜面板能拖能缩还能变悬浮球，飘飘出品，冲鸭！
 // @license      MIT
+// @icon         https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/icon.png
+// @icon64       https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/icon.png
 // @match        *://github.com/*
 // @match        *://*.github.com/*
 // @match        *://raw.githubusercontent.com/*
@@ -1826,7 +1828,8 @@
 }
 
 .ghm-foot-side { flex: 1 1 0; min-width: 0; }
-.ghm-foot-by { flex: 0 0 auto; letter-spacing: .02em; opacity: .85; }
+.ghm-foot-by { flex: 0 0 auto; letter-spacing: .02em; opacity: .85; color: inherit; text-decoration: none; cursor: pointer; }
+.ghm-foot-by:hover { opacity: 1; color: var(--ghm-text); text-decoration: underline; }
 .ghm-foot-link { flex: 1 1 0; margin-left: auto; padding: 2px 5px; border: 0; border-radius: 5px; background: transparent; color: var(--ghm-text-3); font: inherit; font-size: 10.5px; text-align: right; cursor: pointer; }
 .ghm-foot-link:hover { background: var(--ghm-surface-2); color: var(--ghm-text); }
 
@@ -2502,7 +2505,14 @@
     function buildFooter() {
       return Dom.create("footer", { class: "ghm-foot" }, [
         Dom.create("span", { class: "ghm-foot-side", text: "v" + SCRIPT_VERSION }),
-        Dom.create("span", { class: "ghm-foot-by", text: "by PIAOPIAO" }),
+        Dom.create("a", {
+          class: "ghm-foot-by",
+          href: "https://github.com/piaopiaosir/FastGithub-GoGo",
+          target: "_blank",
+          rel: "noopener noreferrer",
+          title: "访问 FastGithub-GoGo 项目主页",
+          text: "by PIAOPIAO"
+        }),
         Dom.create("button", {
           class: "ghm-foot-link",
           type: "button",
