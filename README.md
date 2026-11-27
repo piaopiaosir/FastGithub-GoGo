@@ -51,6 +51,8 @@ CDN 地址（jsdmirror 加速）：`https://cdn.jsdmirror.com/gh/piaopiaosir/Fas
 
 当前版本：1.1.0
 
+- 1.1.0：修正版本号，并配置脚本猫 Webhook 自动同步
+
 ## 许可
 
 MIT © PIAOPIAO
