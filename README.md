@@ -18,16 +18,6 @@ GitHub 镜像加速用户脚本。探测 GitHub 连通性，不可达时自动�
 2. 通过 Raw 链接安装：[FastGithub-GoGo.user.js](https://raw.githubusercontent.com/piaopiaosir/FastGithub-GoGo/main/FastGithub-GoGo.user.js)
 3. 打开 GitHub 任意页面，右下角出现面板即表示脚本已运行。
 
-## 本地启动页（GitHub 完全打不开时）
-
-用户脚本只有在 GitHub 页面**开始加载**之后才会执行。如果 github.com 在 DNS/TCP/TLS 层面就不可达，浏览器显示的是错误页，脚本根本不会被注入，也就无从跳转——这是用户脚本机制的硬限制。
-
-这时用仓库里的 `start.html`：
-
-1. 把 `start.html` 拖进书签栏，或设为浏览器起始页；
-2. 打开后自动探测 GitHub 是否可达（红点=不可达）；
-3. 填仓库路径（如 `piaopiaosir/FastGithub-GoGo`，可留空），点「打开最快镜像」。
-
 ## 设置项
 
 | 设置 | 说明 |

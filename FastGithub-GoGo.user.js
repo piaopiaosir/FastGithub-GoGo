@@ -1290,8 +1290,8 @@
       lastAttemptAt = Date.now();
       markRedirect();
 
-      if (kind === "raw" || !mirror) {
-        Log.info("直接跳转", target);
+      if (kind === "raw" || !mirror || request.skipVerify) {
+        Log.info(request.skipVerify ? "按缓存的镜像健康状态直接跳转" : "直接跳转", target);
         try {
           window.location.replace(target);
           return true;
@@ -3006,11 +3006,15 @@
     }
 
     function queueRedirect(reason) {
-      const wait = SettingsStore.get().respectLogin ? 700 : 0;
+      const settings = SettingsStore.get();
+      const wait = settings.respectLogin ? 700 : 0;
+      const mirror = Redirector.activeMirror();
+      const checkedAt = settings.mirrorsCheckedAt;
+      const trusted = !!(mirror && mirror.ok !== false && checkedAt && Date.now() - checkedAt < MIRROR_CACHE_MS);
       window.setTimeout(function () {
         const latest = SettingsStore.get();
         if (!latest.enabled || !latest.autoRedirect) return;
-        Redirector.redirectToMirror({ reason: reason });
+        Redirector.redirectToMirror({ reason: reason, skipVerify: trusted });
       }, wait);
     }
 
