@@ -35,7 +35,7 @@
     } catch (error) {
       /* 忽略 */
     }
-    return "1.0.0";
+    return "1.1.0";
   })();
   const STORAGE_KEY = "ghm.settings.v2";
   const LEGACY_STORAGE_KEY = "config";
