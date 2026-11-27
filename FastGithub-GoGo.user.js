@@ -2,7 +2,7 @@
 // @name         FastGithub-GoGo 
 // @namespace    飘飘
 // @author       PIAOPIAO
-// @version      1.1.0
+// @version      1.2.0
 // @description  🚀 GitHub 转圈圈？自动探路，不通就秒切镜像站｜Release / raw / 归档下载全走代理加速，快到飞起｜面板能拖能缩还能变悬浮球，飘飘出品，冲鸭！
 // @license      MIT
 // @icon         https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/newicon.png
@@ -35,7 +35,7 @@
     } catch (error) {
       /* 忽略 */
     }
-    return "1.1.0";
+    return "1.2.0";
   })();
   const STORAGE_KEY = "ghm.settings.v2";
   const LEGACY_STORAGE_KEY = "config";
