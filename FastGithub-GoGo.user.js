@@ -2,13 +2,14 @@
 // @name         FastGithub-GoGo 
 // @namespace    飘飘
 // @author       PIAOPIAO
-// @version      1.0.0
+// @version      1.1.0
 // @description  🚀 GitHub 转圈圈？自动探路，不通就秒切镜像站｜Release / raw / 归档下载全走代理加速，快到飞起｜面板能拖能缩还能变悬浮球，飘飘出品，冲鸭！
 // @license      MIT
 // @icon         https://cdn.jsdmirror.com/gh/piaopiaosir/FastGithub-GoGo@main/newicon.png
 // @match        *://github.com/*
 // @match        *://*.github.com/*
 // @match        *://raw.githubusercontent.com/*
+// @match        *://*/*
 // @exclude      *://gist.github.com/*
 // @run-at       document-start
 // @noframes
@@ -56,6 +57,7 @@
     respectLogin: true,
     mirrorId: "",
     rewriteDownloads: true,
+    globalRewrite: true,
     proxyId: "",
     probeTimeoutMs: 4000,
     probeCacheMinutes: 10,
@@ -451,6 +453,7 @@
       if (typeof raw.respectLogin === "boolean") result.respectLogin = raw.respectLogin;
       if (typeof raw.rewriteDownloads === "boolean") result.rewriteDownloads = raw.rewriteDownloads;
       if (typeof raw.autoCollapse === "boolean") result.autoCollapse = raw.autoCollapse;
+      if (typeof raw.globalRewrite === "boolean") result.globalRewrite = raw.globalRewrite;
       if (typeof raw.debug === "boolean") result.debug = raw.debug;
       result.mirrorId = typeof raw.mirrorId === "string" ? raw.mirrorId : "";
       result.proxyId = typeof raw.proxyId === "string" ? raw.proxyId : "";
@@ -2458,6 +2461,7 @@
         { key: "autoRedirect", label: "自动跳转镜像", hint: "确认不可访问时自动切换", bind: function (input) { refs.autoRedirectInput = input; } },
         { key: "respectLogin", label: "登录后不跳转", hint: "检测到 GitHub 登录态时留在原站", bind: function (input) { refs.respectLoginInput = input; } },
         { key: "rewriteDownloads", label: "下载链接加速", hint: "Release / raw / 归档链接走代理", bind: function (input) { refs.rewriteInput = input; } },
+        { key: "globalRewrite", label: "全站接管 GitHub 链接", hint: "其他网页上的 GitHub 链接在直连不通时改写到镜像", bind: function (input) { refs.globalRewriteInput = input; } },
         { key: "autoCollapse", label: "空闲自动收起", hint: "20 秒无操作后收成悬浮球", bind: function (input) { refs.autoCollapseInput = input; } },
         { key: "debug", label: "调试日志", hint: "在控制台输出运行细节", bind: function (input) { refs.debugInput = input; } }
       ];
@@ -2735,6 +2739,7 @@
       if (refs.autoRedirectInput) refs.autoRedirectInput.checked = settings.autoRedirect;
       if (refs.respectLoginInput) refs.respectLoginInput.checked = settings.respectLogin;
       if (refs.rewriteInput) refs.rewriteInput.checked = settings.rewriteDownloads;
+      if (refs.globalRewriteInput) refs.globalRewriteInput.checked = settings.globalRewrite;
       if (refs.autoCollapseInput) refs.autoCollapseInput.checked = settings.autoCollapse;
       if (refs.debugInput) refs.debugInput.checked = settings.debug;
       if (refs.probeButton) refs.probeButton.disabled = state.probing;
@@ -2986,7 +2991,121 @@
   })();
 
   /* ================================================================== *
-   * 11. 启动
+   * 11. 全站守卫（在任意网页上改写 GitHub 链接）
+   * ================================================================== */
+
+  const GlobalGuard = (function () {
+    const MARK = "data-ghg-link";
+    const ORIGINAL = "data-ghg-href";
+    const LINK_QUERY = 'a[href*="github"]';
+    let active = false;
+    let observer = null;
+    let scanTimer = 0;
+    let unreachable = false;
+
+    function rewrite(anchor) {
+      if (!anchor || anchor.nodeType !== 1) return;
+      if (anchor.hasAttribute(MARK)) return;
+      const href = anchor.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      const absolute = UrlMapper.toAbsolute(href);
+      if (!absolute) return;
+      if (!UrlMapper.canMirror(absolute)) return;
+      const mirror = Redirector.activeMirror();
+      if (!mirror) return;
+      const target = UrlMapper.buildMirrorUrl(absolute.href, mirror);
+      if (!target || target === absolute.href) return;
+      anchor.setAttribute(ORIGINAL, href);
+      anchor.setAttribute("href", target);
+      anchor.setAttribute(MARK, mirror.label);
+      const currentTitle = anchor.getAttribute("title");
+      anchor.setAttribute("title", (currentTitle ? currentTitle + " · " : "") + "直连不通，已切到 " + mirror.label);
+    }
+
+    function scan() {
+      if (!active || !unreachable) return;
+      let nodes;
+      try {
+        nodes = document.querySelectorAll(LINK_QUERY);
+      } catch (error) {
+        return;
+      }
+      for (let index = 0; index < nodes.length; index += 1) {
+        try { rewrite(nodes[index]); } catch (error) { /* 单个链接失败不影响其余 */ }
+      }
+    }
+
+    function scheduleScan() {
+      if (scanTimer) return;
+      scanTimer = window.setTimeout(function () {
+        scanTimer = 0;
+        scan();
+      }, 250);
+    }
+
+    function attachObserver() {
+      if (observer || typeof MutationObserver !== "function" || !document.body) return;
+      observer = new MutationObserver(function (records) {
+        if (records && records.length) scheduleScan();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    function onClick(event) {
+      if (!active || !unreachable) return;
+      const target = event.target;
+      const anchor = target && typeof target.closest === "function" ? target.closest("a[href]") : null;
+      if (!anchor || anchor.hasAttribute(MARK)) return;
+      const absolute = UrlMapper.toAbsolute(anchor.getAttribute("href"));
+      if (!absolute || !UrlMapper.canMirror(absolute)) return;
+      const mirror = Redirector.activeMirror();
+      if (!mirror) return;
+      const next = UrlMapper.buildMirrorUrl(absolute.href, mirror);
+      if (!next) return;
+      event.preventDefault();
+      if (anchor.target === "_blank" || event.ctrlKey || event.metaKey || event.shiftKey) {
+        try { window.open(next, anchor.target || "_blank", "noopener"); } catch (error) { window.location.assign(next); }
+        return;
+      }
+      window.location.assign(next);
+    }
+
+    function apply(reachable) {
+      unreachable = reachable === false;
+      if (!unreachable) return;
+      scan();
+      attachObserver();
+    }
+
+    function start() {
+      if (active) return;
+      const settings = SettingsStore.get();
+      if (!settings.enabled || !settings.globalRewrite) return;
+      active = true;
+      document.addEventListener("click", onClick, true);
+      const cached = Reachability.cachedVerdict();
+      if (cached) {
+        apply(cached.reachable);
+        return;
+      }
+      Reachability.probe().then(function (verdict) {
+        apply(verdict && verdict.reachable);
+      });
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", function () {
+          if (unreachable) {
+            scan();
+            attachObserver();
+          }
+        });
+      }
+    }
+
+    return { start: start, scan: scan };
+  })();
+
+  /* ================================================================== *
+   * 12. 启动
    * ================================================================== */
 
   const Bootstrap = (function () {
@@ -3040,7 +3159,8 @@
       Log.setVerbose(SettingsStore.get().debug);
 
       if (Site.kindOf(Site.hostname()) === "other") {
-        Log.info("非目标站点，脚本退出");
+        Log.info("非 GitHub 站点，进入全站守卫模式");
+        try { GlobalGuard.start(); } catch (error) { Log.error("全站守卫启动失败", error); }
         return;
       }
 
